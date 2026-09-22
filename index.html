@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICT DIGITAL CHALLENGE - SKPK MIRI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0B1120;
+            background-image: 
+                linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.9)),
+                url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M0 0h40v40H0V0zm20 20h20v20H20V20zM0 20h20v20H0V20z" fill="%231e293b" fill-opacity="0.4" fill-rule="evenodd"/%3E%3C/svg%3E');
+            color: #F8FAFC;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        .font-cyber { font-family: 'Orbitron', sans-serif; }
+        .glowing-border { box-shadow: 0 0 15px rgba(56, 189, 248, 0.3); border: 1px solid #38BDF8; }
+        .glowing-btn { box-shadow: 0 0 10px rgba(34, 197, 94, 0.4); }
+        .btn-large { min-height: 56px; padding: 16px 24px; font-size: 1.125rem; font-weight: bold; border-radius: 12px; transition: transform 0.1s; }
+        .btn-large:active { transform: scale(0.98); }
+        .card-panel { background: rgba(30, 41, 59, 0.8); border: 1px solid #334155; border-radius: 16px; backdrop-filter: blur(8px); }
+        #app-container { display: flex; flex-direction: column; min-height: 100vh; }
+        .hidden { display: none !important; }
+        
+        /* Animasi Drawer Mobile */
+        .drawer-open { transform: translateY(0); }
+        .drawer-closed { transform: translateY(100%); }
+
+        /* Animasi System Restored */
+        .glitch-text { text-shadow: 2px 0 0 #ff00c1, -2px 0 0 #00fff9; animation: glitch 1s infinite alternate; }
+        @keyframes glitch { 0% { text-shadow: 2px 0 0 #ff00c1, -2px 0 0 #00fff9; } 100% { text-shadow: -2px 0 0 #ff00c1, 2px 0 0 #00fff9; } }
+    </style>
+</head>
+<body class="antialiased">
+
+<div id="app-container">
+    <!-- HEADER -->
+    <header class="card-panel m-4 p-4 flex flex-col md:flex-row justify-between items-center border-b-4 border-b-sky-500">
+        <div class="flex flex-col md:flex-row items-center gap-4 text-center md:text-left">
+            <!-- LOGO[cite: 1] -->
+            <img src="ict.png" alt="Logo Kelab ICT" class="w-20 h-20 object-contain bg-white rounded-full p-1 border-2 border-green-500">
+            <div>
+                <h1 class="font-cyber text-2xl font-bold text-sky-400">KELAB ICT SKPK MIRI</h1>
+                <h2 class="text-xl font-bold text-white tracking-wider">ICT DIGITAL CHALLENGE</h2>
+                <p class="text-green-400 font-semibold mt-1 text-sm md:text-base">Belajar • Uji Minda • Kuasai Teknologi</p>
+            </div>
+        </div>
+        <div class="mt-4 md:mt-0 text-center md:text-right font-cyber bg-slate-900 p-3 rounded-lg border border-slate-700 w-full md:w-auto">
+            <div id="current-date" class="text-sky-300 text-sm md:text-base">📅 Memuatkan...</div>
+            <div id="current-time" class="text-white text-lg md:text-xl font-bold">🕐 Memuatkan...</div>
+            <div class="text-green-400 mt-1 text-sm md:text-base">👁 <span id="visitor-count">128</span> Pelawat</div>
+        </div>
+        <!-- ADMIN ICON -->
+        <button onclick="showView('adminView')" class="absolute top-4 right-4 text-2xl hover:scale-110 transition hidden md:block">⚙️</button>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-grow flex flex-col md:flex-row gap-6 p-4 max-w-7xl mx-auto w-full relative">
+        
+        <!-- LEFT PANEL: QUIZ / DASHBOARD -->
+        <div class="w-full md:w-2/3 flex flex-col gap-6" id="main-view-area">
+            
+            <!-- VIEW 1: WELCOME -->
+            <div id="welcomeView" class="card-panel p-6 md:p-8 text-center glowing-border">
+                <h2 class="font-cyber text-2xl md:text-3xl text-sky-400 mb-4">SELAMAT DATANG KE ICT DIGITAL CHALLENGE</h2>
+                <p class="text-base md:text-lg text-slate-300 mb-8">Arahan: Masukkan nama anda sebelum memulakan cabaran.</p>
+                <div class="max-w-md mx-auto">
+                    <label class="block text-left text-sky-300 font-bold mb-2 text-lg md:text-xl">Nama Murid</label>
+                    <input type="text" id="studentNameInput" placeholder="[ Masukkan nama anda ]" class="w-full bg-slate-900 border-2 border-slate-600 rounded-lg p-4 text-lg md:text-xl text-white focus:border-sky-500 outline-none mb-6 text-center">
+                    <button onclick="startSession()" class="w-full bg-green-500 hover:bg-green-400 text-slate-900 btn-large glowing-btn flex justify-center items-center gap-2">
+                        MULA CABARAN 🚀
+                    </button>
+                    <p id="nameError" class="text-red-400 font-bold mt-4 hidden">Sila masukkan nama anda!</p>
+                </div>
+            </div>
+
+            <!-- VIEW 2: DASHBOARD -->
+            <div id="dashboardView" class="hidden">
+                <div class="card-panel p-6 mb-6">
+                    <h2 class="text-xl md:text-2xl font-bold text-sky-400">Selamat datang, <span id="displayStudentName" class="text-white"></span>!</h2>
+                    <p class="text-slate-300 mt-2 text-base md:text-lg">Selesaikan kedua-dua cabaran dan cuba dapatkan markah tertinggi!</p>
+                    
+                    <div class="mt-6 bg-slate-900 p-4 rounded-lg border border-slate-700">
+                        <h3 class="font-bold text-sky-300 mb-2">KEMAJUAN ANDA</h3>
+                        <p id="progressText" class="text-white font-bold mb-2">0 / 2 Cabaran Selesai</p>
+                        <div class="w-full bg-slate-800 rounded-full h-4">
+                            <div id="progressBar" class="bg-green-500 h-4 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                        <div class="mt-4 flex flex-col gap-2 text-sm md:text-base">
+                            <div id="statusCabaran1" class="text-slate-400 font-bold">▶ 🖥️ Peraturan Bilik Komputer: Belum Selesai</div>
+                            <div id="statusCabaran2" class="text-slate-400 font-bold">▶ 🚀 Misi ICT - Digital Rescue: Belum Selesai</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="font-cyber text-xl md:text-2xl text-white mb-4 text-center md:text-left">CABARAN HARI INI</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- KAD CABARAN 1 (KEKAL) -->
+                    <div class="card-panel p-6 flex flex-col justify-between border-t-4 border-t-sky-500">
+                        <div>
+                            <h3 class="text-lg md:text-xl font-bold text-sky-400 mb-2">CABARAN 1</h3>
+                            <h4 class="text-xl md:text-2xl font-bold text-white mb-4">🖥️ PERATURAN BILIK KOMPUTER</h4>
+                            <p class="text-slate-300 mb-4 text-sm md:text-base">Uji pengetahuan anda tentang peraturan dan penggunaan bilik komputer dengan betul.</p>
+                            <div class="flex flex-wrap gap-2 md:gap-4 mb-6 text-sm md:text-base">
+                                <span class="bg-slate-800 px-3 py-1 rounded-md text-sky-300 font-bold">10 Soalan</span>
+                                <span class="bg-slate-800 px-3 py-1 rounded-md text-green-400 font-bold">100 Markah</span>
+                            </div>
+                        </div>
+                        <button id="btnCabaran1" onclick="startQuiz(1)" class="w-full bg-sky-600 hover:bg-sky-500 text-white btn-large">MULA CABARAN 1</button>
+                    </div>
+
+                    <!-- KAD CABARAN 2 (DIGITAL RESCUE) -->
+                    <div class="card-panel p-6 flex flex-col justify-between border-t-4 border-t-purple-500">
+                        <div>
+                            <h3 class="text-lg md:text-xl font-bold text-purple-400 mb-2">CABARAN 2</h3>
+                            <h4 class="text-xl md:text-2xl font-bold text-white mb-2">🚀 MISI ICT: DIGITAL RESCUE</h4>
+                            <p class="text-red-400 font-bold mb-2 text-sm animate-pulse">AMARAN: SISTEM KOMPUTER GANGGUAN!</p>
+                            <p class="text-slate-300 mb-4 text-sm md:text-base">Selesaikan 4 misi ICT berbeza untuk memulihkan kembali sistem sekolah yang tergendala.</p>
+                            <div class="flex flex-wrap gap-2 md:gap-4 mb-6 text-sm md:text-base">
+                                <span class="bg-slate-800 px-3 py-1 rounded-md text-purple-300 font-bold">4 Peringkat</span>
+                                <span class="bg-slate-800 px-3 py-1 rounded-md text-green-400 font-bold">100 Markah</span>
+                            </div>
+                        </div>
+                        <button id="btnCabaran2" onclick="startDigitalRescue()" class="w-full bg-purple-600 hover:bg-purple-500 text-white btn-large">MULAKAN MISI 🚀</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW 3A: QUIZ ENGINE (UNTUK CABARAN 1 SAHAJA) -->
+            <div id="quizView" class="hidden card-panel p-4 md:p-6 glowing-border">
+                <div class="flex flex-wrap justify-between items-center mb-6 border-b border-slate-700 pb-4 gap-3">
+                    <button onclick="kembaliKeMenu()" class="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-lg text-white font-bold transition flex items-center gap-2 text-sm md:text-base">
+                        ⬅ <span class="hidden sm:inline">Kembali ke Menu</span><span class="sm:hidden">Kembali</span>
+                    </button>
+                    <div class="flex items-center gap-2 md:gap-4">
+                        <span id="quizProgress" class="text-sm md:text-lg font-bold text-white bg-slate-800 px-3 py-2 rounded-lg">SOALAN 1 / 10</span>
+                        <button onclick="tamatCabaran(1)" class="bg-red-600 hover:bg-red-500 px-4 py-2 rounded-lg text-white font-bold transition flex items-center gap-2 text-sm md:text-base">
+                            🛑 <span class="hidden sm:inline">Tamat Cabaran</span><span class="sm:hidden">Tamat</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <h2 id="quizTitle" class="font-cyber text-xl md:text-2xl text-sky-400 mb-4 text-center md:text-left">🖥️ CABARAN 1</h2>
+                <div class="min-h-[250px]">
+                    <div id="questionImageContainer" class="mb-6 flex justify-center hidden">
+                        <img id="questionImage" src="" alt="Gambar Soalan" class="rounded-xl border-2 border-sky-400 max-h-[250px] md:max-h-[300px] object-contain shadow-[0_0_15px_rgba(56,189,248,0.3)] bg-slate-900 p-2">
+                    </div>
+                    <h3 id="questionText" class="text-xl md:text-2xl font-bold text-white mb-6 md:mb-8 leading-relaxed text-center md:text-left">Loading question...</h3>
+                    <div id="optionsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+                </div>
+
+                <div id="feedbackContainer" class="hidden mt-8 p-4 md:p-6 rounded-lg text-center">
+                    <h2 id="feedbackTitle" class="text-2xl md:text-3xl font-bold mb-2"></h2>
+                    <p id="feedbackMessage" class="text-lg md:text-xl text-white mb-6"></p>
+                    <button onclick="nextQuestion()" class="bg-white hover:bg-slate-200 text-slate-900 btn-large w-full md:w-auto md:px-12 inline-block transition">SOALAN SETERUSNYA →</button>
+                </div>
+            </div>
+
+            <!-- VIEW 3B: DIGITAL RESCUE ENGINE (CABARAN 2 SAHAJA) -->
+            <div id="missionView" class="hidden card-panel p-4 md:p-6 glowing-border border-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.3)]">
+                <!-- TOP NAVIGATION -->
+                <div class="flex flex-wrap justify-between items-center mb-6 border-b border-purple-900 pb-4 gap-3">
+                    <button onclick="kembaliKeMenu()" class="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-lg text-white font-bold transition flex items-center gap-2 text-sm md:text-base">
+                        ⬅ <span class="hidden sm:inline">Kembali</span>
+                    </button>
+                    <h2 class="font-cyber text-xl md:text-2xl text-purple-400 text-center flex-grow hidden md:block">🚀 DIGITAL RESCUE</h2>
+                    <button onclick="tamatCabaran(2)" class="bg-red-600 hover:bg-red-500 px-4 py-2 rounded-lg text-white font-bold transition flex items-center gap-2 text-sm md:text-base">
+                        🛑 <span class="hidden sm:inline">Tamat</span>
+                    </button>
+                </div>
+
+                <!-- MISSION PROGRESS INDICATOR -->
+                <div class="flex justify-between text-xs md:text-sm font-bold text-slate-500 mb-8 border-b border-slate-700 pb-4 relative">
+                    <div id="m-ind-1" class="text-purple-400 z-10 bg-[#0F172A] px-2">MISSION 1</div>
+                    <div id="m-ind-2" class="z-10 bg-[#0F172A] px-2">MISSION 2</div>
+                    <div id="m-ind-3" class="z-10 bg-[#0F172A] px-2">MISSION 3</div>
+                    <div id="m-ind-4" class="z-10 bg-[#0F172A] px-2">MISSION 4</div>
+                    <div class="absolute top-1/2 left-0 w-full h-[2px] bg-slate-700 -z-0"></div>
+                </div>
+
+                <!-- MISSION CONTENT INJECTED HERE -->
+                <div id="missionContentArea" class="min-h-[300px]"></div>
+
+            </div>
+
+            <!-- VIEW 4: RESULTS (KEKAL) -->
+            <div id="resultView" class="hidden card-panel p-6 md:p-8 text-center glowing-border border-green-500">
+                <h2 class="font-cyber text-3xl md:text-4xl text-green-400 mb-2">🎉 CABARAN SELESAI!</h2>
+                <h3 class="text-xl md:text-2xl text-white mb-6">Tahniah, <span id="resultName"></span>!</h3>
+                
+                <div class="bg-slate-900 p-4 md:p-6 rounded-xl border border-slate-700 max-w-lg mx-auto mb-6 text-sm md:text-base">
+                    <div class="flex justify-between mb-4 border-b border-slate-700 pb-4">
+                        <div class="text-left">
+                            <div class="text-sky-400 font-bold">Cabaran 1</div>
+                            <div class="text-white">Peraturan Bilik Komputer</div>
+                        </div>
+                        <div class="text-xl md:text-2xl font-bold text-white" id="resScore1">0 / 100</div>
+                    </div>
+                    <div class="flex justify-between mb-4 border-b border-slate-700 pb-4">
+                        <div class="text-left">
+                            <div class="text-purple-400 font-bold">Cabaran 2</div>
+                            <div class="text-white">Digital Rescue</div>
+                        </div>
+                        <div class="text-xl md:text-2xl font-bold text-white" id="resScore2">0 / 100</div>
+                    </div>
+                    <div class="flex justify-between items-center mt-6">
+                        <div class="text-lg md:text-xl font-bold text-slate-400">JUMLAH</div>
+                        <div class="text-3xl md:text-4xl font-cyber font-bold text-sky-400"><span id="resTotal">0</span> / 200</div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg mx-auto mb-8">
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
+                        <div class="text-slate-400 font-bold mb-1 text-sm md:text-base">KEDUDUKAN SEMASA</div>
+                        <div class="text-2xl md:text-3xl font-bold text-white" id="resRank">⏳ Mengira...</div>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
+                        <div class="text-slate-400 font-bold mb-1 text-sm md:text-base">STATUS</div>
+                        <div class="text-xl md:text-2xl font-bold text-yellow-400" id="resStatus">🚀 KEEP LEARNING</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- VIEW 5: ADMIN PANEL (KEKAL) -->
+            <div id="adminView" class="hidden card-panel p-6 border-red-500 border-2">
+                <div class="flex justify-between items-center border-b border-slate-700 pb-4 mb-4">
+                    <h2 class="font-cyber text-xl md:text-2xl text-red-400">⚙️ ADMIN PANEL</h2>
+                    <button onclick="showView('welcomeView')" class="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded text-white font-bold text-sm">TUTUP</button>
+                </div>
+                <div id="adminAuth" class="max-w-sm mx-auto text-center py-8">
+                    <input type="password" id="adminPwd" placeholder="Kata Laluan" class="w-full bg-slate-900 border border-slate-600 rounded p-3 text-white mb-4 text-center">
+                    <button onclick="loginAdmin()" class="bg-red-600 hover:bg-red-500 text-white font-bold py-3 px-6 rounded w-full">LOG MASUK</button>
+                </div>
+                <div id="adminDashboard" class="hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div class="bg-slate-900 p-4 rounded text-center"><div class="text-slate-400 text-sm">Peserta</div><div class="text-2xl font-bold text-white" id="adminTotalParticipants">0</div></div>
+                        <div class="bg-slate-900 p-4 rounded text-center"><div class="text-slate-400 text-sm">Markah Tertinggi</div><div class="text-2xl font-bold text-green-400" id="adminHighScore">0</div></div>
+                        <div class="bg-slate-900 p-4 rounded text-center"><div class="text-slate-400 text-sm">Pelawat</div><div class="text-2xl font-bold text-sky-400" id="adminVisitors">0</div></div>
+                    </div>
+                    <div class="flex flex-col md:flex-row gap-2 mb-4">
+                        <button onclick="alert('Ciri Eksport Excel sedang dikemaskini')" class="bg-green-700 px-4 py-2 rounded text-white font-bold flex-1">Eksport Excel</button>
+                        <button onclick="confirmReset()" class="bg-red-700 px-4 py-2 rounded text-white font-bold flex-1">Reset Sistem</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-white bg-slate-900 rounded-lg text-sm md:text-base min-w-[500px]">
+                            <thead class="bg-slate-800 text-sky-300">
+                                <tr><th class="p-3">Nama</th><th class="p-3">C1</th><th class="p-3">C2</th><th class="p-3">Jumlah</th><th class="p-3">Tindakan</th></tr>
+                            </thead>
+                            <tbody id="adminTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT PANEL: SCOREBOARD (DESKTOP) (KEKAL) -->
+        <div class="hidden md:flex w-full md:w-1/3 flex-col">
+            <div class="card-panel p-6 h-full border-t-4 border-t-yellow-400 flex flex-col max-h-[800px]">
+                <h2 class="font-cyber text-2xl text-yellow-400 mb-6 flex items-center gap-2">🏆 LIVE SCOREBOARD</h2>
+                <div class="flex justify-between text-slate-400 font-bold mb-2 px-2 text-sm">
+                    <span>Rank & Nama</span>
+                    <span>Markah</span>
+                </div>
+                <div id="scoreboardListDesktop" class="flex flex-col gap-3 overflow-y-auto flex-grow pr-2"></div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- FOOTER (KEKAL) -->
+    <footer class="mt-auto bg-slate-900 border-t border-slate-800 py-6 text-center pb-24 md:pb-6">
+        <p class="font-cyber text-sky-500 font-bold text-lg md:text-xl">KELAB ICT</p>
+        <p class="text-white font-bold text-sm md:text-base">SK PENDIDIKAN KHAS MIRI</p>
+        <p class="text-slate-400 text-xs md:text-sm italic mb-2">Agar Dapat Turut Berbakti</p>
+        <p class="text-slate-500 text-xs">© 2026 Kelab ICT SKPK Miri</p>
+    </footer>
+
+    <!-- MOBILE FLOATING BUTTON (KEKAL) -->
+    <button onclick="toggleMobileScoreboard()" class="md:hidden fixed bottom-6 right-6 bg-yellow-500 hover:bg-yellow-400 text-slate-900 w-16 h-16 rounded-full shadow-[0_0_20px_rgba(234,179,8,0.6)] z-40 text-3xl flex items-center justify-center font-bold transition-transform">🏆</button>
+    <!-- MOBILE SCOREBOARD DRAWER (KEKAL) -->
+    <div id="mobileScoreDrawer" class="fixed inset-x-0 bottom-0 drawer-closed transition-transform duration-300 z-50 bg-slate-900 border-t-4 border-yellow-400 rounded-t-3xl shadow-[0_-10px_30px_rgba(0,0,0,0.8)] flex flex-col max-h-[85vh] md:hidden">
+        <div class="p-5 border-b border-slate-700 flex justify-between items-center bg-slate-800 rounded-t-3xl">
+            <h2 class="font-cyber text-xl text-yellow-400 font-bold flex items-center gap-2">🏆 LIVE SCOREBOARD</h2>
+            <button onclick="toggleMobileScoreboard()" class="text-white text-3xl font-bold p-2 leading-none hover:text-red-400 transition">&times;</button>
+        </div>
+        <div class="p-4 overflow-y-auto flex-grow" id="scoreboardListMobile"></div>
+    </div>
+    <div id="mobileOverlay" onclick="toggleMobileScoreboard()" class="fixed inset-0 bg-black bg-opacity-60 z-40 hidden md:hidden backdrop-blur-sm transition-opacity"></div>
+</div>
+
+<!-- ============================================== -->
+<!-- SCRIPT: FIREBASE INTEGRATION & APPLICATION LOGIC -->
+<!-- ============================================== -->
+<script type="module">
+    // 1. IMPORT FIREBASE DARI CDN RASMI
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics.js";
+
+    // 2. KONFIGURASI FIREBASE CIKGU
+    const firebaseConfig = {
+      apiKey: "AIzaSyAeoIlGQux1Hu8y2vqqqfRJsFES6Tk-XUg",
+      authDomain: "kuizict-12b3e.firebaseapp.com",
+      projectId: "kuizict-12b3e",
+      storageBucket: "kuizict-12b3e.firebasestorage.app",
+      messagingSenderId: "1054105659494",
+      appId: "1:1054105659494:web:ff64d7baf1f5af8f6b65a7",
+      measurementId: "G-7PLYKKMHZT"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getDatabase(app);
+
+    // --- STATE MANAGEMENT ---
+    let currentUser = { name: "", score1: null, score2: null, startTime: null };
+    let currentQuiz = 0;
+    let currentQuestionIndex = 0;
+    
+    // SOALAN CABARAN 1 (GAMBAR TEMPATAN)
+    const quiz1Data = [
+        { q: "Apakah yang perlu dilakukan sebelum menggunakan komputer?", image: "soalan1.png", options: ["Tekan semua butang", "Tunggu arahan guru", "Cabut kabel komputer", "Makan terlebih dahulu"], answer: 1, feedback: "Bagus! Kita perlu mengikuti arahan guru sebelum menggunakan komputer." },
+        { q: "Bolehkah kita membawa makanan dan minuman ke dalam bilik komputer?", image: "soalan2.png", options: ["Boleh jika lapar", "Boleh simpan dalam beg", "Tidak boleh sama sekali", "Boleh jika minuman botol"], answer: 2, feedback: "Tepat! Makanan dan minuman boleh merosakkan peralatan elektronik jika tertumpah." },
+        { q: "Bagaimanakah postur atau kedudukan duduk yang betul semasa menggunakan komputer?", image: "soalan3.png", options: ["Membongkok ke hadapan", "Duduk tegak bersandar pada kerusi", "Baring di atas meja", "Duduk bersila di atas kerusi"], answer: 1, feedback: "Betul! Duduk tegak membantu menjaga kesihatan tulang belakang anda." },
+        { q: "Apakah tindakan anda sekiranya komputer tidak berfungsi atau rosak?", image: "soalan4.png", options: ["Ketuk komputer", "Baiki sendiri", "Lapor kepada guru segera", "Biarkan sahaja"], answer: 2, feedback: "Pintar! Guru akan membantu menyemak dan membaiki komputer tersebut." },
+        { q: "Apakah cara penggunaan Internet yang bertanggungjawab di makmal komputer?", image: "soalan5.png", options: ["Membuka laman web permainan", "Membuka laman web bermanfaat untuk belajar", "Menonton video hiburan sepanjang masa", "Memuat turun fail besar tanpa izin"], answer: 1, feedback: "Terbaik! Internet di sekolah adalah untuk tujuan pembelajaran." },
+        { q: "Siapakah yang bertanggungjawab menjaga kebersihan bilik komputer?", image: "soalan6.png", options: ["Tukang cuci sahaja", "Guru ICT sahaja", "Semua murid dan pengguna", "Ketua kelas sahaja"], answer: 2, feedback: "Betul! Menjaga kebersihan adalah tanggungjawab kita bersama." },
+        { q: "Apa yang perlu anda lakukan jika ternampak wayar atau kabel yang terputus?", image: "soalan7.png", options: ["Sambung semula sendiri", "Sentuh untuk periksa", "Tarik wayar tersebut", "Beritahu guru dan jangan sentuh"], answer: 3, feedback: "Keselamatan diutamakan! Jangan sentuh wayar yang rosak untuk mengelak renjatan elektrik." },
+        { q: "Bagaimanakah cara yang betul untuk mematikan komputer?", image: "soalan8.png", options: ["Tutup suis pada dinding terus", "Cabut palam kuasa", "Gunakan fungsi 'Shut Down' pada skrin", "Tutup skrin monitor sahaja"], answer: 2, feedback: "Tepat! Menggunakan 'Shut Down' memastikan sistem komputer ditutup dengan selamat." },
+        { q: "Apakah yang perlu dilakukan sebelum keluar dari bilik komputer?", image: "soalan9.png", options: ["Berlari keluar dengan cepat", "Tinggalkan komputer hidup", "Susun kerusi dengan kemas", "Bawa balik tetikus (mouse)"], answer: 2, feedback: "Bagus! Bilik komputer perlulah sentiasa ditinggalkan dalam keadaan kemas." },
+        { q: "Mengapakah kita dilarang berlari di dalam bilik komputer?", image: "soalan10.png", options: ["Sebab boleh tersadung wayar dan cedera", "Sebab lantai licin", "Sebab guru akan marah", "Sebab komputer akan rosak"], answer: 0, feedback: "Betul! Berlari boleh menyebabkan kemalangan seperti tersadung wayar." }
+    ];
+
+    // MOCK DATABASE KINI DIKOSONGKAN (Digantikan dengan Data Firebase Realtime)
+    let dbMock = { results: [] };
+
+    // ============================================
+    // PENGESANAN DATA FIREBASE (REALTIME LISTENER)
+    // ============================================
+    const resultsRef = ref(db, 'results');
+    onValue(resultsRef, (snapshot) => {
+        const data = snapshot.val();
+        dbMock.results = [];
+        if (data) {
+            // Tukar data dari format objek ke array
+            for (let key in data) {
+                dbMock.results.push(data[key]);
+            }
+        }
+        renderScoreboard(currentUser.score1 !== null && currentUser.score2 !== null ? currentUser.score1 + currentUser.score2 : -1);
+        
+        // Kemaskini panel admin jika terbuka
+        if(!document.getElementById('adminView').classList.contains('hidden')) {
+            loadAdminData();
+        }
+    });
+
+    // --- UTILITIES ---
+    function updateDateTime() {
+        const now = new Date();
+        const optsD = { timeZone: 'Asia/Kuala_Lumpur', year: 'numeric', month: 'long', day: 'numeric' };
+        const optsT = { timeZone: 'Asia/Kuala_Lumpur', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+        document.getElementById('current-date').innerText = new Intl.DateTimeFormat('ms-MY', optsD).format(now);
+        document.getElementById('current-time').innerText = new Intl.DateTimeFormat('en-US', optsT).format(now);
+    }
+    setInterval(updateDateTime, 1000); updateDateTime();
+    if(!sessionStorage.getItem('visited')) {
+        let cv = parseInt(localStorage.getItem('visitorCount') || "128");
+        localStorage.setItem('visitorCount', cv + 1); sessionStorage.setItem('visited', 'true');
+    }
+    document.getElementById('visitor-count').innerText = localStorage.getItem('visitorCount') || "128";
+
+    function showView(viewId) {
+        ['welcomeView', 'dashboardView', 'quizView', 'missionView', 'resultView', 'adminView'].forEach(id => {
+            document.getElementById(id).classList.add('hidden');
+        });
+        document.getElementById(viewId).classList.remove('hidden');
+    }
+
+    function toggleMobileScoreboard() {
+        const drawer = document.getElementById('mobileScoreDrawer');
+        const overlay = document.getElementById('mobileOverlay');
+        if(drawer.classList.contains('drawer-closed')) {
+            drawer.classList.remove('drawer-closed'); drawer.classList.add('drawer-open'); overlay.classList.remove('hidden');
+        } else {
+            drawer.classList.remove('drawer-open'); drawer.classList.add('drawer-closed'); overlay.classList.add('hidden');
+        }
+    }
+
+    // --- LOGIC APP ---
+    function startSession() {
+        const nameInput = document.getElementById('studentNameInput').value.trim();
+        if(nameInput === "") return document.getElementById('nameError').classList.remove('hidden');
+        currentUser.name = nameInput;
+        document.getElementById('displayStudentName').innerText = currentUser.name;
+        updateDashboardProgress(); showView('dashboardView'); renderScoreboard();
+    }
+
+    function updateDashboardProgress() {
+        let completed = 0;
+        if(currentUser.score1 !== null) {
+            completed++;
+            let s1 = document.getElementById('statusCabaran1');
+            s1.innerHTML = `✅ 🖥️ Peraturan Bilik Komputer: Selesai — <span class="text-green-400">${currentUser.score1}/100</span>`;
+            s1.classList.replace('text-slate-400', 'text-white');
+            let b1 = document.getElementById('btnCabaran1');
+            b1.innerText = "✅ SELESAI"; b1.disabled = true; b1.classList.replace('bg-sky-600', 'bg-slate-700'); b1.classList.remove('hover:bg-sky-500');
+        }
+        if(currentUser.score2 !== null) {
+            completed++;
+            let s2 = document.getElementById('statusCabaran2');
+            s2.innerHTML = `✅ 🚀 Digital Rescue: Selesai — <span class="text-green-400">${currentUser.score2}/100</span>`;
+            s2.classList.replace('text-slate-400', 'text-white');
+            let b2 = document.getElementById('btnCabaran2');
+            b2.innerText = "✅ SELESAI"; b2.disabled = true; b2.classList.replace('bg-purple-600', 'bg-slate-700'); b2.classList.remove('hover:bg-purple-500');
+        }
+        document.getElementById('progressText').innerText = `${completed} / 2 Cabaran Selesai`;
+        document.getElementById('progressBar').style.width = `${(completed/2)*100}%`;
+        if(completed === 2) setTimeout(showResults, 1000);
+    }
+
+    // --- QUIZ CABARAN 1 ---
+    function startQuiz(quizId) {
+        if(quizId === 1 && currentUser.score1 !== null) return alert("Anda telah menyelesaikan cabaran ini.");
+        currentQuiz = 1; currentQuestionIndex = 0; currentUser.tempScore = 0;
+        showView('quizView'); renderQuestion();
+    }
+    function renderQuestion() {
+        const qData = quiz1Data[currentQuestionIndex];
+        document.getElementById('quizProgress').innerText = `SOALAN ${currentQuestionIndex + 1} / 10`;
+        document.getElementById('questionText').innerText = qData.q;
+        const imgContainer = document.getElementById('questionImageContainer');
+        const imgElement = document.getElementById('questionImage');
+        if(qData.image) { imgElement.src = qData.image; imgContainer.classList.remove('hidden'); } else { imgContainer.classList.add('hidden'); }
+        
+        const optionsContainer = document.getElementById('optionsContainer'); optionsContainer.innerHTML = '';
+        qData.options.forEach((opt, idx) => {
+            const btn = document.createElement('button');
+            btn.className = "btn-large bg-slate-800 border-2 border-slate-600 hover:border-sky-400 text-white text-left font-semibold transition-all flex items-center p-3 md:p-4 w-full h-full";
+            btn.innerHTML = `<span class="bg-slate-700 text-sky-400 px-3 py-1 rounded-md mr-3 md:mr-4 font-bold">${String.fromCharCode(65 + idx)}</span> <span class="text-sm md:text-base">${opt}</span>`;
+            btn.onclick = () => checkAnswer(idx, btn);
+            optionsContainer.appendChild(btn);
+        });
+        document.getElementById('feedbackContainer').classList.add('hidden');
+    }
+    function checkAnswer(selectedIndex, btnElement) {
+        const buttons = document.getElementById('optionsContainer').querySelectorAll('button');
+        buttons.forEach(b => { b.disabled = true; b.classList.add('opacity-50', 'cursor-not-allowed'); });
+        const qData = quiz1Data[currentQuestionIndex];
+        const fContainer = document.getElementById('feedbackContainer');
+        const fTitle = document.getElementById('feedbackTitle');
+        const fMessage = document.getElementById('feedbackMessage');
+
+        if(selectedIndex === qData.answer) {
+            btnElement.classList.replace('bg-slate-800', 'bg-green-600'); btnElement.classList.replace('border-slate-600', 'border-green-400'); btnElement.classList.remove('opacity-50');
+            currentUser.tempScore += 10;
+            fContainer.className = "mt-6 md:mt-8 p-4 md:p-6 rounded-lg text-center bg-green-900 border-2 border-green-500 animate-pulse";
+            fTitle.innerHTML = "✅ BETUL!"; fTitle.className = "text-2xl md:text-3xl font-bold mb-2 text-green-300";
+        } else {
+            btnElement.classList.replace('bg-slate-800', 'bg-red-600'); btnElement.classList.replace('border-slate-600', 'border-red-400'); btnElement.classList.remove('opacity-50');
+            buttons[qData.answer].classList.replace('bg-slate-800', 'bg-green-600'); buttons[qData.answer].classList.remove('opacity-50');
+            fContainer.className = "mt-6 md:mt-8 p-4 md:p-6 rounded-lg text-center bg-red-900 border-2 border-red-500";
+            fTitle.innerHTML = "❌ BELUM TEPAT"; fTitle.className = "text-2xl md:text-3xl font-bold mb-2 text-red-300";
+        }
+        fMessage.innerText = qData.feedback; fContainer.classList.remove('hidden');
+    }
+    function nextQuestion() {
+        currentQuestionIndex++;
+        if(currentQuestionIndex < 10) renderQuestion();
+        else { currentUser.score1 = currentUser.tempScore; updateDashboardProgress(); showView('dashboardView'); }
+    }
+
+    // =========================================================================
+    // SISTEM CABARAN 2 - DIGITAL RESCUE
+    // =========================================================================
+    let currentMission = 1;
+    let drScore = 0;
+
+    let m2Left = [
+        {id: 'L1', text: 'Keyboard', match: 'R1'}, {id: 'L2', text: 'Mouse', match: 'R2'},
+        {id: 'L3', text: 'Printer', match: 'R3'}, {id: 'L4', text: 'Speaker', match: 'R4'}, {id: 'L5', text: 'Monitor', match: 'R5'}
+    ];
+    let m2Right = [
+        {id: 'R1', text: 'Menaip'}, {id: 'R2', text: 'Mengawal pointer'},
+        {id: 'R3', text: 'Mencetak'}, {id: 'R4', text: 'Mengeluarkan bunyi'}, {id: 'R5', text: 'Memaparkan maklumat'}
+    ];
+    let m2SelectedLeft = null;
+    let m2MatchesFound = 0;
+
+    let m4Questions = [
+        {q: "Membawa air minuman berhampiran komputer.", image: "bawaair.png", ans: false},
+        {q: "Menutup komputer menggunakan butang Shut Down.", image: "shutdown.png", ans: true},
+        {q: "Berkongsi kata laluan dengan kawan rapat.", image: "password.png", ans: false},
+        {q: "Melaporkan kerosakan komputer kepada guru.", image: "lapor.png", ans: true},
+        {q: "Bermain kejar-kejar di dalam makmal komputer.", image: "kejar.png", ans: false}
+    ];
+    let m4Index = 0;
+
+    function startDigitalRescue() {
+        if(currentUser.score2 !== null) return alert("Anda telah menyelesaikan misi ini.");
+        currentQuiz = 2; currentMission = 1; drScore = 0;
+        updateMissionProgressUI();
+        showView('missionView');
+        loadMission(1);
+    }
+
+    function updateMissionProgressUI() {
+        for(let i=1; i<=4; i++) {
+            let el = document.getElementById(`m-ind-${i}`);
+            if(i < currentMission) el.className = "z-10 bg-[#0F172A] px-2 text-green-400 font-bold line-through";
+            else if(i === currentMission) el.className = "z-10 bg-[#0F172A] px-2 text-purple-400 font-bold scale-110";
+            else el.className = "z-10 bg-[#0F172A] px-2 text-slate-500 font-bold";
+        }
+    }
+
+    function loadMission(m) {
+        const container = document.getElementById('missionContentArea');
+        container.innerHTML = "";
+        
+        if (m === 1) {
+            container.innerHTML = `
+                <div class="text-center mb-6">
+                    <h3 class="text-2xl text-purple-400 font-cyber mb-2">MISSION 1: PERKAKAS DIGITAL</h3>
+                    <p class="text-white text-lg bg-slate-800 p-4 rounded-lg border border-slate-600">"Cikgu mahu mencetak hasil kerja murid. Perkakas manakah yang perlu digunakan?"</p>
+                </div>
+                <div class="grid grid-cols-2 gap-4 max-w-md mx-auto" id="m1Options">
+                    <button onclick="checkM1(false, this)" class="bg-slate-800 p-4 rounded-xl border-2 border-slate-600 hover:border-purple-400 transition flex flex-col items-center">
+                        <img src="keyboard.png" class="mb-2 rounded w-24 h-24 md:w-32 md:h-32 object-contain bg-white p-2"> <span class="text-white font-bold">Keyboard</span>
+                    </button>
+                    <button onclick="checkM1(false, this)" class="bg-slate-800 p-4 rounded-xl border-2 border-slate-600 hover:border-purple-400 transition flex flex-col items-center">
+                        <img src="monitor.png" class="mb-2 rounded w-24 h-24 md:w-32 md:h-32 object-contain bg-white p-2"> <span class="text-white font-bold">Monitor</span>
+                    </button>
+                    <button onclick="checkM1(true, this)" class="bg-slate-800 p-4 rounded-xl border-2 border-slate-600 hover:border-purple-400 transition flex flex-col items-center">
+                        <img src="printer.png" class="mb-2 rounded w-24 h-24 md:w-32 md:h-32 object-contain bg-white p-2"> <span class="text-white font-bold">Printer</span>
+                    </button>
+                    <button onclick="checkM1(false, this)" class="bg-slate-800 p-4 rounded-xl border-2 border-slate-600 hover:border-purple-400 transition flex flex-col items-center">
+                        <img src="mouse.png" class="mb-2 rounded w-24 h-24 md:w-32 md:h-32 object-contain bg-white p-2"> <span class="text-white font-bold">Mouse</span>
+                    </button>
+                </div>
+                <div id="m1Feedback" class="hidden text-center mt-6 p-4 rounded-lg"></div>
+            `;
+        } 
+        else if (m === 2) {
+            m2MatchesFound = 0;
+            let shuffledRight = [...m2Right].sort(() => Math.random() - 0.5);
+            container.innerHTML = `
+                <div class="text-center mb-6">
+                    <h3 class="text-2xl text-purple-400 font-cyber mb-2">MISSION 2: SISTEM PENYAMBUNGAN</h3>
+                    <p class="text-white text-lg bg-slate-800 p-4 rounded-lg border border-slate-600">Tekan perkakas (Kiri), kemudian tekan fungsinya (Kanan) untuk memadankan mereka.</p>
+                </div>
+                <div class="flex justify-between gap-2 md:gap-8 max-w-2xl mx-auto">
+                    <!-- KIRI -->
+                    <div class="flex flex-col gap-3 w-1/2" id="m2LeftCol">
+                        ${m2Left.map(item => `<button id="${item.id}" onclick="m2SelectLeft('${item.id}', '${item.match}')" class="m2-left-btn bg-slate-800 text-white font-bold p-3 md:p-4 rounded-lg border-2 border-slate-600 text-sm md:text-base">${item.text}</button>`).join('')}
+                    </div>
+                    <!-- KANAN -->
+                    <div class="flex flex-col gap-3 w-1/2" id="m2RightCol">
+                        ${shuffledRight.map(item => `<button id="${item.id}" onclick="m2SelectRight('${item.id}')" class="m2-right-btn bg-slate-800 text-sky-200 font-bold p-3 md:p-4 rounded-lg border-2 border-slate-600 text-sm md:text-base">${item.text}</button>`).join('')}
+                    </div>
+                </div>
+                <div id="m2NextBtn" class="hidden text-center mt-8"><button onclick="goToNextMission()" class="bg-purple-600 hover:bg-purple-500 text-white btn-large px-8">MISI SETERUSNYA 🚀</button></div>
+            `;
+        }
+        else if (m === 3) {
+            container.innerHTML = `
+                <div class="text-center mb-6">
+                    <h3 class="text-2xl text-purple-400 font-cyber mb-2">MISSION 3: CYBER SAFETY</h3>
+                    <p class="text-white text-lg bg-slate-800 p-4 rounded-lg border border-slate-600">"Anda menerima mesej daripada orang tidak dikenali meminta kata laluan (password) anda. Apakah tindakan yang betul?"</p>
+                </div>
+                <div class="grid grid-cols-1 gap-4 max-w-xl mx-auto" id="m3Options">
+                    <button onclick="checkM3(false, this)" class="bg-slate-800 text-white font-bold p-4 rounded-xl border-2 border-slate-600 hover:border-purple-400 text-left">A. Berikan kata laluan dengan segera</button>
+                    <button onclick="checkM3(true, this)" class="bg-slate-800 text-white font-bold p-4 rounded-xl border-2 border-slate-600 hover:border-purple-400 text-left">B. Abaikan dan laporkan kepada guru atau ibu bapa</button>
+                    <button onclick="checkM3(false, this)" class="bg-slate-800 text-white font-bold p-4 rounded-xl border-2 border-slate-600 hover:border-purple-400 text-left">C. Balas mesej tersebut dan berkawan</button>
+                    <button onclick="checkM3(false, this)" class="bg-slate-800 text-white font-bold p-4 rounded-xl border-2 border-slate-600 hover:border-purple-400 text-left">D. Berikan nombor telefon sahaja</button>
+                </div>
+                <div id="m3Feedback" class="hidden text-center mt-6 p-4 rounded-lg"></div>
+            `;
+        }
+        else if (m === 4) {
+            m4Index = 0;
+            renderM4Question();
+        }
+        else if (m === 5) {
+            container.innerHTML = `
+                <div class="text-center py-12 flex flex-col items-center justify-center min-h-[400px]">
+                    <div class="text-6xl md:text-8xl mb-6">🛡️</div>
+                    <h2 class="font-cyber text-4xl md:text-5xl text-green-400 mb-4 glitch-text font-bold">SYSTEM RESTORED</h2>
+                    <h3 class="text-xl md:text-2xl text-white mb-8">🏆 MISSION COMPLETED!</h3>
+                    <p class="text-slate-300 mb-8 max-w-md">Syabas! Anda telah berjaya menyelesaikan semua misi dan menyelamatkan sistem komputer sekolah.</p>
+                    <button onclick="finishDigitalRescue()" class="bg-green-600 hover:bg-green-500 text-white btn-large px-12 glowing-btn text-xl">SIMPAN MARKAH</button>
+                </div>
+            `;
+        }
+    }
+
+    function checkM1(isCorrect, btn) {
+        const btns = document.getElementById('m1Options').querySelectorAll('button');
+        btns.forEach(b => { b.disabled = true; b.classList.add('opacity-50', 'cursor-not-allowed'); });
+        btn.classList.remove('opacity-50');
+        const fb = document.getElementById('m1Feedback');
+        fb.classList.remove('hidden');
+        if(isCorrect) {
+            drScore += 25;
+            btn.classList.replace('bg-slate-800', 'bg-green-700'); btn.classList.replace('border-slate-600', 'border-green-400');
+            fb.className = "mt-6 p-4 rounded-lg bg-green-900 border border-green-400 text-green-200 font-bold";
+            fb.innerHTML = "✅ TEPAT! Printer digunakan untuk mencetak. <br><br><button onclick='goToNextMission()' class='bg-white text-slate-900 px-6 py-2 rounded mt-2 hover:bg-slate-200'>MISI SETERUSNYA</button>";
+        } else {
+            btn.classList.replace('bg-slate-800', 'bg-red-700'); btn.classList.replace('border-slate-600', 'border-red-400');
+            fb.className = "mt-6 p-4 rounded-lg bg-red-900 border border-red-400 text-red-200 font-bold";
+            fb.innerHTML = "❌ SALAH! Jawapan betul ialah Printer. <br><br><button onclick='goToNextMission()' class='bg-white text-slate-900 px-6 py-2 rounded mt-2 hover:bg-slate-200'>MISI SETERUSNYA</button>";
+        }
+    }
+
+    function m2SelectLeft(id, matchId) {
+        document.querySelectorAll('.m2-left-btn:not(.matched)').forEach(b => b.classList.replace('border-purple-400', 'border-slate-600'));
+        const btn = document.getElementById(id);
+        if(btn.classList.contains('matched')) return;
+        btn.classList.replace('border-slate-600', 'border-purple-400');
+        m2SelectedLeft = { id: id, match: matchId };
+    }
+    function m2SelectRight(id) {
+        if(!m2SelectedLeft) return;
+        const btnRight = document.getElementById(id);
+        if(btnRight.classList.contains('matched')) return;
+        const btnLeft = document.getElementById(m2SelectedLeft.id);
+        if(m2SelectedLeft.match === id) {
+            drScore += 5; m2MatchesFound++;
+            btnLeft.classList.add('matched', 'bg-green-700', 'border-green-400', 'opacity-80', 'cursor-default');
+            btnRight.classList.add('matched', 'bg-green-700', 'border-green-400', 'opacity-80', 'cursor-default', 'text-white');
+            m2SelectedLeft = null;
+            if(m2MatchesFound === 5) document.getElementById('m2NextBtn').classList.remove('hidden');
+        } else {
+            btnRight.classList.replace('border-slate-600', 'border-red-500');
+            setTimeout(() => { if(!btnRight.classList.contains('matched')) btnRight.classList.replace('border-red-500', 'border-slate-600'); }, 800);
+        }
+    }
+
+    function checkM3(isCorrect, btn) {
+        const btns = document.getElementById('m3Options').querySelectorAll('button');
+        btns.forEach(b => { b.disabled = true; b.classList.add('opacity-50', 'cursor-not-allowed'); });
+        btn.classList.remove('opacity-50');
+        const fb = document.getElementById('m3Feedback');
+        fb.classList.remove('hidden');
+        if(isCorrect) {
+            drScore += 25;
+            btn.classList.replace('bg-slate-800', 'bg-green-700'); btn.classList.replace('border-slate-600', 'border-green-400');
+            fb.className = "mt-6 p-4 rounded-lg bg-green-900 border border-green-400 text-green-200 font-bold";
+            fb.innerHTML = "✅ TEPAT! Jangan kongsi maklumat peribadi. <br><br><button onclick='goToNextMission()' class='bg-white text-slate-900 px-6 py-2 rounded mt-2 hover:bg-slate-200'>MISI SETERUSNYA</button>";
+        } else {
+            btn.classList.replace('bg-slate-800', 'bg-red-700'); btn.classList.replace('border-slate-600', 'border-red-400');
+            fb.className = "mt-6 p-4 rounded-lg bg-red-900 border border-red-400 text-red-200 font-bold";
+            fb.innerHTML = "❌ SALAH! Sentiasa abaikan dan laporkan. <br><br><button onclick='goToNextMission()' class='bg-white text-slate-900 px-6 py-2 rounded mt-2 hover:bg-slate-200'>MISI SETERUSNYA</button>";
+        }
+    }
+
+    function renderM4Question() {
+        const container = document.getElementById('missionContentArea');
+        const qData = m4Questions[m4Index];
+        container.innerHTML = `
+            <div class="text-center mb-6">
+                <h3 class="text-2xl text-purple-400 font-cyber mb-2">MISSION 4: SCAN KESELAMATAN (${m4Index+1}/5)</h3>
+                <p class="text-slate-300 text-sm mb-4">Kenal pasti sama ada tindakan ini BETUL atau SALAH.</p>
+                <div class="mb-6 flex justify-center">
+                    <img src="${qData.image}" alt="Gambar Situasi" class="rounded-xl border-2 border-purple-400 max-h-[200px] md:max-h-[250px] object-contain shadow-[0_0_15px_rgba(168,85,247,0.3)] bg-slate-900 p-2">
+                </div>
+                <div class="bg-slate-800 border-2 border-sky-400 p-6 rounded-xl shadow-[0_0_15px_rgba(56,189,248,0.2)]">
+                    <h2 class="text-xl md:text-2xl font-bold text-white leading-relaxed">"${qData.q}"</h2>
+                </div>
+            </div>
+            <div class="flex justify-center gap-6 max-w-sm mx-auto" id="m4Options">
+                <button onclick="checkM4(true, this)" class="bg-slate-800 hover:bg-green-800 text-green-400 border-2 border-green-500 font-bold py-4 px-8 rounded-xl flex-1 text-xl transition">✅ BETUL</button>
+                <button onclick="checkM4(false, this)" class="bg-slate-800 hover:bg-red-800 text-red-400 border-2 border-red-500 font-bold py-4 px-8 rounded-xl flex-1 text-xl transition">❌ SALAH</button>
+            </div>
+            <div id="m4Feedback" class="hidden text-center mt-6 p-4 rounded-lg"></div>
+        `;
+    }
+    
+    function checkM4(userAns, btn) {
+        const btns = document.getElementById('m4Options').querySelectorAll('button');
+        btns.forEach(b => { b.disabled = true; b.classList.add('opacity-50'); });
+        btn.classList.remove('opacity-50');
+        const qData = m4Questions[m4Index];
+        const fb = document.getElementById('m4Feedback');
+        fb.classList.remove('hidden');
+
+        if(userAns === qData.ans) {
+            drScore += 5; // 5 x 5 = 25m
+            btn.classList.replace('bg-slate-800', 'bg-green-700'); btn.classList.replace('text-green-400', 'text-white'); btn.classList.replace('text-red-400', 'text-white');
+            fb.className = "mt-4 p-3 rounded-lg bg-green-900 text-green-200 font-bold"; fb.innerHTML = "✅ TEPAT!";
+        } else {
+            btn.classList.replace('bg-slate-800', 'bg-red-700'); btn.classList.replace('text-green-400', 'text-white'); btn.classList.replace('text-red-400', 'text-white');
+            fb.className = "mt-4 p-3 rounded-lg bg-red-900 text-red-200 font-bold"; fb.innerHTML = "❌ BELUM TEPAT!";
+        }
+        
+        setTimeout(() => { m4Index++; if(m4Index < 5) renderM4Question(); else goToNextMission(); }, 1200);
+    }
+
+    function goToNextMission() {
+        currentMission++; updateMissionProgressUI(); loadMission(currentMission);
+    }
+
+    function finishDigitalRescue() {
+        currentUser.score2 = drScore; updateDashboardProgress(); showView('dashboardView');
+    }
+
+    // --- BUTTON KEMBALI & TAMAT ---
+    function kembaliKeMenu() {
+        if(confirm("Adakah anda pasti mahu kembali ke Menu Utama?\nMarkah untuk cabaran semasa tidak akan disimpan.")) {
+            if(currentQuiz === 1) currentUser.tempScore = 0; 
+            showView('dashboardView');
+        }
+    }
+    function tamatCabaran(type) {
+        if(confirm("Adakah anda pasti mahu menamatkan cabaran ini sekarang?\nMarkah yang diperolehi setakat ini sahaja yang akan direkodkan.")) {
+            if(type === 1) currentUser.score1 = currentUser.tempScore;
+            if(type === 2) currentUser.score2 = drScore; 
+            updateDashboardProgress(); showView('dashboardView');
+        }
+    }
+
+    // --- RESULT & PENGHANTARAN DATA KE FIREBASE ---
+    function showResults() {
+        const total = currentUser.score1 + currentUser.score2;
+        document.getElementById('resultName').innerText = currentUser.name;
+        document.getElementById('resScore1').innerText = `${currentUser.score1} / 100`;
+        document.getElementById('resScore2').innerText = `${currentUser.score2} / 100`;
+        document.getElementById('resTotal').innerText = total;
+
+        let sStr = "🚀 KEEP LEARNING", sCol = "text-slate-300";
+        if(total >= 180) { sStr = "🏆 ICT MASTER"; sCol = "text-yellow-400"; }
+        else if (total >= 150) { sStr = "⭐ DIGITAL EXPLORER"; sCol = "text-sky-400"; }
+        else if (total >= 100) { sStr = "💻 TECH LEARNER"; sCol = "text-green-400"; }
+        
+        const sEl = document.getElementById('resStatus');
+        sEl.innerText = sStr; sEl.className = `text-xl md:text-2xl font-bold ${sCol}`;
+
+        // HANTAR DATA KE FIREBASE MENGGUNAKAN `push()`
+        const newData = {
+            id: Date.now().toString(),
+            nama: currentUser.name,
+            total_score: total,
+            c1_score: currentUser.score1,
+            c2_score: currentUser.score2,
+            time: new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Kuala_Lumpur', hour: '2-digit', minute: '2-digit' }).format(new Date())
+        };
+        
+        push(ref(db, 'results'), newData)
+            .then(() => {
+                showView('resultView'); // Tunjuk hasil jika berjaya
+            })
+            .catch((error) => {
+                console.error("Gagal simpan ke Firebase:", error);
+                alert("Ralat sistem: Sila semak sambungan Internet.");
+            });
+    }
+
+    function renderScoreboard(userTotal = -1) {
+        let sorted = [...dbMock.results].sort((a, b) => b.total_score - a.total_score);
+        let htmlStr = "";
+        
+        if (sorted.length === 0) {
+            htmlStr = `<div class="text-center text-slate-400 mt-4 text-sm">Tiada rekod buat masa ini.</div>`;
+        }
+
+        sorted.forEach((item, index) => {
+            let rankMedal = `${index + 1}.`;
+            if(index === 0) rankMedal = "🥇"; if(index === 1) rankMedal = "🥈"; if(index === 2) rankMedal = "🥉";
+            const isCurrent = item.nama === currentUser.name && item.total_score === userTotal;
+            if(isCurrent) document.getElementById('resRank').innerText = `${rankMedal} #${index + 1}`;
+            htmlStr += `
+                <div class="flex justify-between items-center p-3 rounded-lg border ${isCurrent ? 'bg-sky-900 border-sky-400 shadow-[0_0_10px_rgba(56,189,248,0.5)]' : 'bg-slate-800 border-slate-700'}">
+                    <div class="flex items-center gap-3">
+                        <span class="text-xl font-bold w-8 text-center">${rankMedal}</span>
+                        <span class="font-bold text-sm md:text-base truncate max-w-[100px] md:max-w-[150px] ${isCurrent ? 'text-white' : 'text-slate-300'}">${item.nama}</span>
+                    </div>
+                    <div class="font-cyber font-bold text-sm md:text-base ${isCurrent ? 'text-sky-300' : 'text-green-400'}">${item.total_score} XP</div>
+                </div>`;
+        });
+        const lDesk = document.getElementById('scoreboardListDesktop'); const lMob = document.getElementById('scoreboardListMobile');
+        if(lDesk) lDesk.innerHTML = htmlStr; if(lMob) lMob.innerHTML = htmlStr;
+    }
+
+    // --- ADMIN LOGIC ---
+    function loginAdmin() {
+        if(document.getElementById('adminPwd').value === "admin123") {
+            document.getElementById('adminAuth').classList.add('hidden'); document.getElementById('adminDashboard').classList.remove('hidden'); loadAdminData();
+        } else alert("Kata laluan salah!");
+    }
+    
+    function loadAdminData() {
+        document.getElementById('adminTotalParticipants').innerText = dbMock.results.length;
+        document.getElementById('adminVisitors').innerText = localStorage.getItem('visitorCount') || "128";
+        let highest = 0; const tbody = document.getElementById('adminTableBody'); tbody.innerHTML = "";
+        
+        let sortedAdmin = [...dbMock.results].sort((a, b) => b.total_score - a.total_score);
+
+        sortedAdmin.forEach(item => {
+            if(item.total_score > highest) highest = item.total_score;
+            tbody.innerHTML += `
+                <tr class="border-b border-slate-700 hover:bg-slate-800">
+                    <td class="p-3">${item.nama}</td>
+                    <td class="p-3 text-sky-400">${item.c1_score || '-'}</td>
+                    <td class="p-3 text-purple-400">${item.c2_score || '-'}</td>
+                    <td class="p-3 font-bold text-green-400">${item.total_score}</td>
+                    <td class="p-3"><button class="bg-red-600 px-3 py-1 rounded text-xs md:text-sm hover:bg-red-500" onclick="alert('Padam spesifik perlukan Firebase key unik. Reset Sistem (semua) berfungsi.')">Padam</button></td>
+                </tr>`;
+        });
+        document.getElementById('adminHighScore').innerText = highest;
+    }
+    
+    function confirmReset() {
+        if(confirm("AWAS: Adakah anda pasti mahu memadam SEMUA rekod scoreboard? Tindakan ini tidak boleh diundur.")) { 
+            // PADAM DATA DARI FIREBASE SECARA LIVE
+            remove(ref(db, 'results'))
+                .then(() => {
+                    alert("Berjaya! Semua rekod telah dipadam dari sistem.");
+                })
+                .catch((error) => {
+                    alert("Gagal memadam data.");
+                });
+        }
+    }
+    
+    // ============================================
+    // DAFTARKAN FUNGSI KE BROWSER WINDOW GLOBAL
+    // Membolehkan onclick="..." dalam HTML dipanggil walau dalam fail module
+    // ============================================
+    window.showView = showView;
+    window.toggleMobileScoreboard = toggleMobileScoreboard;
+    window.startSession = startSession;
+    window.startQuiz = startQuiz;
+    window.checkAnswer = checkAnswer;
+    window.nextQuestion = nextQuestion;
+    window.startDigitalRescue = startDigitalRescue;
+    window.checkM1 = checkM1;
+    window.m2SelectLeft = m2SelectLeft;
+    window.m2SelectRight = m2SelectRight;
+    window.checkM3 = checkM3;
+    window.checkM4 = checkM4;
+    window.goToNextMission = goToNextMission;
+    window.finishDigitalRescue = finishDigitalRescue;
+    window.kembaliKeMenu = kembaliKeMenu;
+    window.tamatCabaran = tamatCabaran;
+    window.loginAdmin = loginAdmin;
+    window.confirmReset = confirmReset;
+
+    renderScoreboard();
+</script>
+</body>
+</html>
